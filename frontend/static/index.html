@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run For Your Life — AI Running & Mindset Coach</title>
+<!-- Google Fonts: Outfit & Inter for Revolut/Apple-level typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<!-- Material Symbols for Apple/Revolut style iconography -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+<style>
+  :root {
+    --bg-dark: #090D16;
+    --bg-card: #121826;
+    --bg-card-hover: #1A2234;
+    --bg-input: #171F30;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(139, 92, 246, 0.3);
+    
+    --navy-deep: #0D1322;
+    --violet-primary: #7C3AED;
+    --violet-bright: #8B5CF6;
+    --violet-glow: rgba(139, 92, 246, 0.35);
+    --violet-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #D946EF 100%);
+    --card-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.0) 100%);
+    
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    
+    --success-green: #10B981;
+    --radius-xl: 20px;
+    --radius-lg: 14px;
+    --radius-md: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- HEADER & NAVIGATION (Revolut / macOS Style) --- */
+  header {
+    background: rgba(13, 19, 34, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 20;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--violet-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 16px var(--violet-glow);
+    font-size: 1.2rem;
+  }
+  .brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .brand-status {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success-green);
+    box-shadow: 0 0 8px var(--success-green);
+  }
+
+  /* Segmented Control Nav Tabs */
+  .nav-tabs {
+    display: flex;
+    background: var(--bg-input);
+    padding: 3px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+  }
+  .tab-btn {
+    padding: 0.5rem 1.1rem;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .tab-btn.active {
+    background: var(--violet-primary);
+    color: #FFF;
+    box-shadow: 0 2px 10px var(--violet-glow);
+  }
+  .tab-btn:hover:not(.active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* --- VIEW CONTAINER --- */
+  main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .view {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .view.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* --- CHAT VIEW --- */
+  #log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Chat Messages */
+  .msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 82%;
+    animation: fadeIn 0.25s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.user {
+    align-self: flex-end;
+    align-items: flex-end;
+  }
+  .msg.agent {
+    align-self: flex-start;
+    align-items: flex-start;
+  }
+
+  .bubble {
+    padding: 0.85rem 1.15rem;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg.user .bubble {
+    background: var(--violet-gradient);
+    color: #FFFFFF;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 15px var(--violet-glow);
+  }
+  .msg.agent .bubble {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+  .bubble.rich {
+    background: transparent;
+    border: none;
+    padding: 0;
+    max-width: 100%;
+    white-space: normal;
+    box-shadow: none;
+  }
+
+  /* --- SHORTCUT ACTION BAR & INPUT --- */
+  .chat-controls {
+    max-width: 860px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem 1.5rem 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .shortcuts-row {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .shortcuts-row::-webkit-scrollbar { display: none; }
+
+  .shortcut-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    padding: 0.5rem 0.9rem;
+    border-radius: 30px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+  }
+  .shortcut-btn:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+    border-color: var(--border-highlight);
+    transform: translateY(-1px);
+  }
+  .shortcut-btn .material-symbols-outlined {
+    font-size: 1.1rem;
+    color: var(--violet-bright);
+  }
+
+  /* Floating Input Form */
+  .input-form {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 0.4rem 0.4rem 0.4rem 1rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.2s ease;
+  }
+  .input-form:focus-within {
+    border-color: var(--violet-primary);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 2px var(--violet-glow);
+  }
+  .chat-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  .send-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: var(--violet-gradient);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .send-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 16px var(--violet-glow);
+  }
+
+  /* --- STATS VIEW --- */
+  #stats-view {
+    overflow-y: auto;
+    padding: 2rem 1.5rem;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .stats-title h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .stats-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    margin-top: 0.2rem;
+  }
+
+  /* Metrics Cards Grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    background-image: var(--card-gradient);
+  }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--violet-gradient);
+    opacity: 0.7;
+  }
+  .metric-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .metric-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-top: 0.4rem;
+    color: var(--text-primary);
+  }
+  .metric-trend {
+    font-size: 0.78rem;
+    color: var(--success-green);
+    margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  /* Progress Bar Card */
+  .goal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+  .goal-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .progress-bg {
+    height: 10px;
+    background: var(--bg-input);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 78%;
+    background: var(--violet-gradient);
+    border-radius: 5px;
+    box-shadow: 0 0 12px var(--violet-glow);
+  }
+
+  /* History Table / List */
+  .history-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+  .history-header {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .run-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .run-item:last-child { border-bottom: none; }
+  .run-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .run-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: rgba(139, 92, 246, 0.12);
+    color: var(--violet-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .run-title { font-weight: 600; font-size: 0.95rem; }
+  .run-date { font-size: 0.78rem; color: var(--text-muted); }
+  .run-stats { text-align: right; }
+  .run-dist { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; }
+  .run-time { font-size: 0.78rem; color: var(--text-secondary); }
+
+  /* --- MODAL FORM (LOG A RUN) --- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(9, 13, 22, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-highlight);
+    border-radius: var(--radius-xl);
+    width: 90%;
+    max-width: 460px;
+    padding: 1.75rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    transform: translateY(12px);
+    transition: transform 0.2s ease;
+  }
+  .modal-overlay.active .modal-card {
+    transform: translateY(0);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+  .modal-header h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.4rem;
+  }
+  .close-btn:hover { color: var(--text-primary); }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+
+  }
+  .form-row {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  .form-control:focus {
+    border-color: var(--violet-primary);
+  }
+
+  .emoji-picker {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .emoji-opt {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .emoji-opt.selected, .emoji-opt:hover {
+    border-color: var(--violet-bright);
+    background: rgba(139, 92, 246, 0.15);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--violet-gradient);
+    color: #FFF;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 20px var(--violet-glow);
+  }
+  .submit-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  /* --- A2UI COMPONENT STYLES (Revolut Styled Cards) --- */
+  .a2card {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+  .a2col { display: flex; flex-direction: column; gap: 0.5rem; }
+  .a2row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+  .a2row.between { justify-content: space-between; }
+  .a2text { margin: 0; line-height: 1.45; }
+  .a2text.a2-h1 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; color: #FFF; }
+  .a2text.a2-h2 { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; color: #FFF; }
+  .a2text.a2-h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 600; color: #FFF; }
+  .a2text.a2-caption { font-size: 0.82rem; color: var(--text-muted); }
+  .a2divider { border: none; border-top: 1px solid var(--border-subtle); margin: 0.6rem 0; width: 100%; }
+  .a2img { max-width: 100%; border-radius: 12px; display: block; margin: 0.5rem 0; border: 1px solid var(--border-subtle); }
+  .material-symbols-outlined { font-size: 1.25rem; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <div class="brand-logo">🏃</div>
+    <div>
+      <div class="brand-title">Run For Your Life</div>
+      <div class="brand-status">
+        <div class="status-dot"></div> AI Coach Connected
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Switcher -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tab-chat-btn" onclick="switchTab('chat')">
+      <span class="material-symbols-outlined">forum</span> Chat
+    </button>
+    <button class="tab-btn" id="tab-stats-btn" onclick="switchTab('stats')">
+      <span class="material-symbols-outlined">monitoring</span> Stats
+    </button>
+  </div>
+</header>
+
+<!-- MAIN CONTENT VIEWS -->
+<main>
+  <!-- 1. CHAT VIEW -->
+  <div class="view active" id="chat-view">
+    <div id="log"></div>
+
+    <!-- Shortcut Actions & Input -->
+    <div class="chat-controls">
+      <div class="shortcuts-row">
+        <button class="shortcut-btn" onclick="openLogModal()">
+          <span class="material-symbols-outlined">edit_note</span> Log a Run
+        </button>
+        <button class="shortcut-btn" onclick="triggerPlanRun()">
+          <span class="material-symbols-outlined">route</span> Plan a Run
+        </button>
+        <button class="shortcut-btn" onclick="triggerWeeklyAchievement()">
+          <span class="material-symbols-outlined">emoji_events</span> Weekly Achievement
+        </button>
+      </div>
+
+      <form class="input-form" id="form">
+        <input class="chat-input" id="input" placeholder="Ask your coach anything about running, weather, or mindset..." autocomplete="off" autofocus>
+        <button class="send-btn" type="submit">
+          <span class="material-symbols-outlined">send</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. STATS VIEW -->
+  <div class="view" id="stats-view">
+    <div class="stats-header">
+      <div class="stats-title">
+        <h2>Performance Dashboard</h2>
+        <div class="stats-subtitle">Weekly summary and running history</div>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">
+          <span class="material-symbols-outlined" style="color:var(--violet-bright)">distance</span> Distance (Week)
+        </div>
+        <div class="metric-value" id="stat-dist">24.5 km</div>
+        <div class="metric-trend">
+          <span class="material-symbols-outlined">trending_up</span> +12% vs last week
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span class="material-symbols-outlined" style="color:#38BDF8">timer</span> Avg Pace
+        </div>
+        <div class="metric-value" id="stat-pace">5'22" /km</div>
+        <div class="metric-trend" style="color:#38BDF8">
+          <span class="material-symbols-outlined">bolt</span> Faster pace
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-label">
+          <span class="material-symbols-outlined" style="color:#F43F5E">favorite</span> Total Runs
+        </div>
+        <div class="metric-value" id="stat-runs">4 runs</div>
+        <div class="metric-trend">
+          <span class="material-symbols-outlined">check_circle</span> Consistency goal met
+        </div>
+      </div>
+    </div>
+
+    <!-- Goal Progress Card -->
+    <div class="goal-card">
+      <div class="goal-header">
+        <span>Weekly Goal Target: 30 km</span>
+        <span>81%</span>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Recent Run History -->
+    <div class="history-card">
+      <div class="history-header">Recent Running Sessions</div>
+      <div id="run-history-list">
+        <!-- Dynamically rendered runs -->
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- LOG A RUN MODAL -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Log Your Last Run</h3>
+      <button class="close-btn" onclick="closeLogModal()">&times;</button>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-group" style="flex:1;">
+        <label>Distance (km)</label>
+        <input type="number" step="0.1" class="form-control" id="modal-dist" placeholder="5.0">
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label>Duration (mins)</label>
+        <input type="number" class="form-control" id="modal-dur" placeholder="28">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>How did you feel before running?</label>
+      <div class="emoji-picker" id="pre-feeling">
+        <div class="emoji-opt selected" onclick="selectEmoji('pre-feeling', this, '⚡ Energetic')">⚡ Energetic</div>
+        <div class="emoji-opt" onclick="selectEmoji('pre-feeling', this, '🙂 Good')">🙂 Good</div>
+        <div class="emoji-opt" onclick="selectEmoji('pre-feeling', this, '😴 Tired')">😴 Tired</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>How did you feel after running?</label>
+      <div class="emoji-picker" id="post-feeling">
+        <div class="emoji-opt selected" onclick="selectEmoji('post-feeling', this, '🔥 Accomplished')">🔥 Great</div>
+        <div class="emoji-opt" onclick="selectEmoji('post-feeling', this, '🧘 Calm')">🧘 Calm</div>
+        <div class="emoji-opt" onclick="selectEmoji('post-feeling', this, '😵 Exhausted')">😵 Spent</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Weather / Notes (Optional)</label>
+      <input type="text" class="form-control" id="modal-notes" placeholder="e.g. Sunny, mild breeze, felt strong on hills">
+    </div>
+
+    <button class="submit-btn" onclick="submitRunLog()">Save & Log Run with AI</button>
+  </div>
+</div>
+
+<script>
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+
+// Tab Navigation
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+  document.getElementById(`tab-${tabName}-btn`).classList.add('active');
+  document.getElementById(`${tabName}-view`).classList.add('active');
+  if (tabName === 'stats') renderStatsView();
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function bubble(who) {
+  const m = el("div", "msg " + who);
+  const b = el("div", "bubble");
+  m.appendChild(b);
+  log.appendChild(m);
+  log.scrollTop = log.scrollHeight;
+  return b;
+}
+
+// Pre-seeded local run history for Stats View
+let localRuns = [
+  { date: "Yesterday", distance: 6.2, duration: 32, pre: "Energetic", post: "Accomplished" },
+  { date: "3 days ago", distance: 5.0, duration: 26, pre: "Good", post: "Calm" },
+  { date: "5 days ago", distance: 8.5, duration: 46, pre: "Tired", post: "Great" },
+  { date: "1 week ago", distance: 4.8, duration: 25, pre: "Good", post: "Great" }
+];
+
+function loadLocalRuns() {
+  try {
+    const saved = localStorage.getItem("run_for_your_life_runs");
+    if (saved) {
+      localRuns = JSON.parse(saved);
+    }
+  } catch (e) {
+    console.error("Could not load runs from localStorage:", e);
+  }
+}
+
+function saveLocalRuns() {
+  try {
+    localStorage.setItem("run_for_your_life_runs", JSON.stringify(localRuns));
+  } catch (e) {
+    console.error("Could not save runs to localStorage:", e);
+  }
+}
+
+function renderStatsView() {
+  const list = document.getElementById("run-history-list");
+  list.innerHTML = "";
+  
+  let totalKm = 0;
+  localRuns.forEach(r => {
+    totalKm += r.distance;
+    const item = el("div", "run-item");
+    item.innerHTML = `
+      <div class="run-info">
+        <div class="run-icon">
+          <span class="material-symbols-outlined">directions_run</span>
+        </div>
+        <div>
+          <div class="run-title">${r.distance} km Run</div>
+          <div class="run-date">${r.date} • Felt ${r.post}</div>
+        </div>
+      </div>
+      <div class="run-stats">
+        <div class="run-dist">${r.distance} km</div>
+        <div class="run-time">${r.duration} mins</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  document.getElementById("stat-dist").textContent = `${totalKm.toFixed(1)} km`;
+  document.getElementById("stat-runs").textContent = `${localRuns.length} runs`;
+}
+
+// Initial Greeting
+window.addEventListener('DOMContentLoaded', () => {
+  loadLocalRuns();
+  renderStatsView();
+  const b = bubble("agent");
+  b.textContent = "Welcome back! 🏃 I'm your Run For Your Life coach. How can we power your run today?";
+});
+
+/* --- SHORTCUT ACTION HANDLERS --- */
+function openLogModal() {
+  document.getElementById('log-modal').classList.add('active');
+}
+function closeLogModal() {
+  document.getElementById('log-modal').classList.remove('active');
+}
+
+let selectedPre = 'Energetic';
+let selectedPost = 'Great';
+function selectEmoji(groupId, elem, val) {
+  document.querySelectorAll(`#${groupId} .emoji-opt`).forEach(e => e.classList.remove('selected'));
+  elem.classList.add('selected');
+  if (groupId === 'pre-feeling') selectedPre = val;
+  if (groupId === 'post-feeling') selectedPost = val;
+}
+
+function submitRunLog() {
+  const dist = document.getElementById('modal-dist').value || "5.0";
+  const dur = document.getElementById('modal-dur').value || "30";
+  const notes = document.getElementById('modal-notes').value || "Feels good";
+  
+  // 1. Add to local state & persist to browser localStorage
+  localRuns.unshift({ date: "Just now", distance: parseFloat(dist), duration: parseInt(dur), pre: selectedPre, post: selectedPost });
+  saveLocalRuns();
+  renderStatsView();
+  closeLogModal();
+  
+  // 2. Send message to AI agent to store in Firestore & Memory Bank
+  const msgText = `Log my run: ${dist} km in ${dur} minutes. Pre-run feeling: ${selectedPre}, Post-run feeling: ${selectedPost}. Notes: ${notes}.`;
+  sendMessage(msgText);
+}
+
+function triggerPlanRun() {
+  sendMessage("Can you help me plan an adaptive running route and workout routine for today?");
+}
+
+function triggerWeeklyAchievement() {
+  sendMessage("Check my recent logged runs in Firestore (get_run_history) and generate an achievement badge (generate_achievement_badge) for my weekly running progress!");
+}
+
+/* --- A2UI RENDERER (Basic Catalog v0.8) --- */
+function boundStr(v) {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v.literalString === "string") return v.literalString;
+  return "";
+}
+
+function childIds(props) {
+  const ids = [];
+  if (props && typeof props.child === "string") ids.push(props.child);
+  const ch = props && props.children;
+  if (ch && Array.isArray(ch.explicitList)) for (const c of ch.explicitList) if (typeof c === "string") ids.push(c);
+  return ids;
+}
+
+function iconName(n) { return String(n || "").replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/\s+/g, "_").toLowerCase(); }
+
+function buildNode(id, comps, seen) {
+  if (!id || seen.has(id)) return null;
+  seen.add(id);
+  const spec = comps[id];
+  if (!spec || typeof spec !== "object") return null;
+  const type = Object.keys(spec)[0];
+  const props = spec[type] || {};
+  const kids = () => childIds(props).map(cid => buildNode(cid, comps, seen)).filter(Boolean);
+
+  switch (type) {
+    case "Card": {
+      const d = el("div", "a2card"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Column":
+    case "List": {
+      const horizontal = type === "List" && props.direction === "horizontal";
+      const d = el("div", horizontal ? "a2row" : "a2col"); kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Row": {
+      const d = el("div", "a2row" + (props.distribution === "spaceBetween" ? " between" : ""));
+      kids().forEach(n => d.appendChild(n)); return d;
+    }
+    case "Text": {
+      const t = el("div", "a2text");
+      const hint = String(props.usageHint || "body").toLowerCase();
+      if (["h1", "h2", "h3", "h4", "h5", "h6"].includes(hint)) t.classList.add("a2-" + hint);
+      else if (hint === "caption") t.classList.add("a2-caption");
+      t.textContent = boundStr(props.text);
+      return t;
+    }
+    case "Divider":
+      return el("hr", "a2divider");
+    case "Image": {
+      const src = boundStr(props.url || props.src);
+      if (!/^https?:\/\//i.test(src)) return null;
+      const img = el("img", "a2img"); img.src = src; img.alt = boundStr(props.alt) || ""; return img;
+    }
+    case "Icon": {
+      const s = el("span", "material-symbols-outlined"); s.textContent = iconName(boundStr(props.name) || props.name); return s;
+    }
+    default:
+      return null;
+  }
+}
+
+function renderSurface(messages, container) {
+  const comps = {};
+  const roots = [];
+  for (const m of messages) {
+    if (m.beginRendering && typeof m.beginRendering.root === "string") roots.push(m.beginRendering.root);
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.id && c.component) comps[c.id] = c.component;
+  }
+  let rootIds = roots.filter(r => comps[r]);
+  if (rootIds.length === 0) {
+    const referenced = new Set();
+    for (const id in comps) { const spec = comps[id]; childIds(spec[Object.keys(spec)[0]] || {}).forEach(c => referenced.add(c)); }
+    rootIds = Object.keys(comps).filter(id => !referenced.has(id));
+  }
+  let drew = false;
+  for (const rid of rootIds) { const node = buildNode(rid, comps, new Set()); if (node) { container.appendChild(node); drew = true; } }
+  return drew;
+}
+
+function flattenText(messages) {
+  const out = [];
+  for (const m of messages) {
+    const su = m.surfaceUpdate;
+    if (su && Array.isArray(su.components)) for (const c of su.components) if (c && c.component && c.component.Text) out.push(boundStr(c.component.Text.text));
+  }
+  return out.join("\n").trim();
+}
+
+function renderReply(b, parts) {
+  b.textContent = "";
+  const texts = parts.filter(p => p && (p.kind === "text" || (!p.kind && p.text))).map(p => p.text || "");
+  const a2ui = parts.filter(p => p && p.kind === "a2ui" && p.data).map(p => p.data);
+
+  let textStr = texts.join("\n").trim();
+  // Strip raw wrapper tags or markdown residues
+  textStr = textStr.replace(/<\/?(?:json|html|a2ui|a2a_datapart_json)>/gi, "").replace(/```(?:json|html|a2ui)?/gi, "").trim();
+
+  // Extract HTTP image/video URLs
+  const imgUrls = [];
+  const vidUrls = [];
+  const urlRegex = /(https?:\/\/[^\s"'<>]+\.(?:png|jpg|jpeg|svg|gif|mp4))/gi;
+  let match;
+  while ((match = urlRegex.exec(textStr)) !== null) {
+    const url = match[1];
+    if (url.toLowerCase().endsWith('.mp4')) {
+      vidUrls.push(url);
+    } else {
+      imgUrls.push(url);
+    }
+  }
+
+  if (textStr) {
+    b.appendChild(el("div", null, textStr));
+  }
+
+  // Auto-render Image & Badge previews
+  imgUrls.forEach(url => {
+    const card = el("div", "a2card");
+    const img = el("img", "a2img");
+    img.src = url;
+    img.alt = "Achievement Badge / Image";
+    img.style.maxHeight = "260px";
+    img.style.borderRadius = "12px";
+    img.style.objectFit = "contain";
+    img.style.margin = "8px 0";
+    card.appendChild(img);
+    b.appendChild(card);
+  });
+
+  // Auto-render Video previews
+  vidUrls.forEach(url => {
+    const card = el("div", "a2card");
+    const vid = document.createElement("video");
+    vid.src = url;
+    vid.controls = true;
+    vid.autoplay = true;
+    vid.loop = true;
+    vid.muted = true;
+    vid.style.width = "100%";
+    vid.style.borderRadius = "12px";
+    vid.style.margin = "8px 0";
+    card.appendChild(vid);
+    b.appendChild(card);
+  });
+
+  if (a2ui.length) {
+    b.classList.add("rich");
+    renderSurface(a2ui, b);
+  }
+  if (!b.childNodes.length) b.textContent = "(no response)";
+  log.scrollTop = log.scrollHeight;
+}
+
+/* --- SEND MESSAGE HANDLER --- */
+async function sendMessage(text) {
+  switchTab('chat');
+  bubble("user").textContent = text;
+  input.value = "";
+  const b = bubble("agent"); b.textContent = "…";
+  try {
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+    const raw = await res.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch { throw new Error(`Server returned non-JSON (HTTP ${res.status}). ${raw.slice(0, 300)}`); }
+    renderReply(b, data.parts || []);
+  } catch (e) {
+    b.textContent = "Error: " + e.message;
+  }
+}
+
+form.addEventListener("submit", (ev) => {
+  ev.preventDefault();
+  const text = input.value.trim();
+  if (text) sendMessage(text);
+});
+</script>
+</body>
+</html>
